@@ -1,0 +1,72 @@
+
+        html,
+        body {
+            background-color:#eeebb8;
+        }
+
+        .cabecalho {
+            background-color: rgb(121, 124, 127);
+
+            border: 1px solid #DEE2E6;
+            color: white;
+        }
+
+        .cabecalho img {
+            width: 20%;
+            border-radius: none;
+
+        }
+
+        .tabuleiro {
+            background-color: rgb(129, 180, 225);
+            border-radius: 5px;
+            margin-bottom: 10px;
+            color: white;
+            padding: 4px;
+        }
+        .mensagens {
+            border: 1px solid #DEE2E6;
+            background-color: rgb(49, 70, 88);
+            border-radius: 10px;
+            color: white;
+            padding: 12px;
+            margin: 10px;
+
+        }
+        textarea {
+            border: 1px solid black;
+            background-color: rgb(222, 222, 213) !important;
+        }
+        input {
+            background-color: rgb(222, 222, 213);
+        }
+
+        .tabuleiro img {
+            border: 1px solid black;
+            border-radius: 5px;
+            width: 100%;
+            margin-bottom: 5%;
+        }
+
+
+        .responsive-text {
+            font-size: 24px;
+        }
+
+        @media (min-width: 576px) {
+            .responsive-text {
+                font-size: 30px;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .responsive-text {
+                font-size: 22px;
+            }
+        }
+
+        @media (min-width: 992px) {
+            .responsive-text {
+                font-size: 16px;
+            }
+        }
