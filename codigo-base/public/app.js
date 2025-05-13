@@ -1,8 +1,4 @@
 
-// Client-side JavaScript for the "Cara a Cara" game.
-// Handles user interface interactions, WebSocket communication with the server,
-// and game state updates on the client.
-
 const socket = io();
 
 const usernameInput = document.getElementById('username');
@@ -24,16 +20,40 @@ const sendGameMsgButton = document.getElementById('sendGameMsgButton');
 const confirmLeaveGameButton = document.getElementById('confirmLeaveGameButton');
 
 const yourCharacterImage = document.getElementById('your-character-image');
-const yourCharacterNameDisplay = document.getElementById('your-character-name');
 const opponentUsernameDisplay = document.getElementById('opponent-username-display');
+const characterGuessSelect = document.getElementById('characterGuessSelect');
+const makeGuessButton = document.getElementById('makeGuessButton');
 
 
 let currentRoomId = null;
 let myUsername = null;
+let myCharacterId = null;
 let opponentUsernameGlobal = null;
 let pendingInitiatorUsername = null;
 
+const characterData = [
+    { id: 'alessandro', name: 'Alessandro' }, { id: 'alfredo', name: 'Alfredo' },
+    { id: 'anita', name: 'Anita' }, { id: 'anna', name: 'Anna' },
+    { id: 'bernardo', name: 'Bernardo' }, { id: 'carlo', name: 'Carlo' },
+    { id: 'chiara', name: 'Chiara' }, { id: 'davide', name: 'Davide' },
+    { id: 'ernesto', name: 'Ernesto' }, { id: 'filippo', name: 'Filippo' },
+    { id: 'giacomo', name: 'Giacomo' }, { id: 'giorgio', name: 'Giorgio' },
+    { id: 'giuseppe', name: 'Giuseppe' }, { id: 'guglielmo', name: 'Guglielmo' },
+    { id: 'manuele', name: 'Manuele' }, { id: 'marco', name: 'Marco' },
+    { id: 'maria', name: 'Maria' }, { id: 'pietro', name: 'Pietro' },
+    { id: 'poolo', name: 'Poolo' },
+    { id: 'riccardo', name: 'Riccardo' }, { id: 'roberto', name: 'Roberto' },
+    { id: 'samuele', name: 'Samuele' }, { id: 'susanna', name: 'Susanna' },
+    { id: 'tommaso', name: 'Tommaso' }
+];
+
+
 var vetorImagens = [];
+
+function capitalizeFirstLetter(string) {
+    if (!string) return '';
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
 
 function reInicia() {
     console.log('Reinicia o estado do tabuleiro local');
@@ -41,6 +61,13 @@ function reInicia() {
         vetorImagens[a].style.filter = 'opacity(1)';
     }
     mensagensRecebidas.value = '';
+    myCharacterId = null;
+    yourCharacterImage.src = '';
+    yourCharacterImage.alt = 'Seu Personagem';
+    characterGuessSelect.value = '';
+    makeGuessButton.disabled = false;
+    sendGameMsgButton.disabled = false;
+    inputMsg.disabled = false;
 }
 
 function marcaDesmarca(imgElement) {
@@ -48,9 +75,20 @@ function marcaDesmarca(imgElement) {
     imgElement.style.filter = isMarked ? 'opacity(1)' : 'opacity(0.1)';
 }
 
+function populateGuessSelect() {
+    characterGuessSelect.innerHTML = '<option selected disabled value="">Escolha um personagem...</option>';
+    characterData.forEach(char => {
+        const option = document.createElement('option');
+        option.value = char.id;
+        option.textContent = char.name;
+        characterGuessSelect.appendChild(option);
+    });
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     const imagens = document.querySelectorAll('.tabuleiro img');
     vetorImagens = Array.from(imagens);
+    populateGuessSelect();
 });
 
 
@@ -58,6 +96,11 @@ function displayStatus(message, type = 'info') {
     statusArea.textContent = message;
     statusArea.className = `status-message status-${type}`;
     statusArea.style.display = 'block';
+}
+
+function appendGameMessage(text) {
+    mensagensRecebidas.value += text + '\n';
+    mensagensRecebidas.scrollTop = mensagensRecebidas.scrollHeight;
 }
 
 connectButton.addEventListener('click', () => {
@@ -151,13 +194,16 @@ socket.on('game_started', (data) => {
     opponentUsernameGlobal = data.players.find(p => p !== myUsername);
     opponentUsernameDisplay.textContent = opponentUsernameGlobal || 'Oponente';
 
-    if (data.players[0] === myUsername) {
-        yourCharacterImage.src = 'f1.png';
-        yourCharacterNameDisplay.textContent = 'Personagem 1';
+    if (data.playerCharacters && data.playerCharacters[myUsername]) {
+        myCharacterId = data.playerCharacters[myUsername];
+        yourCharacterImage.src = `${myCharacterId}.png`;
+        yourCharacterImage.alt = `Seu personagem: ${capitalizeFirstLetter(myCharacterId)}`;
+        appendGameMessage(`*** Seu personagem secreto foi definido! ***`);
     } else {
-        yourCharacterImage.src = 'f2.png';
-        yourCharacterNameDisplay.textContent = 'Personagem 2';
+        appendGameMessage(`*** Erro ao definir seu personagem! ***`);
+        console.error("Character assignment missing for user:", myUsername, data);
     }
+
     usernameInput.value = '';
     opponentNameInput.value = '';
     connectButton.disabled = false;
@@ -173,23 +219,47 @@ sendGameMsgButton.addEventListener('click', () => {
             message: message,
             type: 'chat_message'
         });
-        mensagensRecebidas.value += `Você: ${message}\n`;
-        mensagensRecebidas.scrollTop = mensagensRecebidas.scrollHeight;
+        appendGameMessage(`Você: ${message}`);
         inputMsg.value = '';
     }
 });
 
-socket.on('receive_game_message', (data) => {
-    if (data.type === 'chat_message' || !data.type) {
-         mensagensRecebidas.value += `${data.sender}: ${data.message}\n`;
-    } else if (data.type === 'pergunta') {
-        mensagensRecebidas.value += `Pergunta de ${data.sender}: ${data.data.questionText}\n`;
-    } else if (data.type === 'character_toggle') {
-        // const charImg = document.querySelector(`.tabuleiro img[data-char="${data.data.character}"]`);
-        // if (charImg) charImg.style.filter = data.data.marked ? 'opacity(0.1)' : 'opacity(1)';
+makeGuessButton.addEventListener('click', () => {
+    const guessedCharacterId = characterGuessSelect.value;
+    if (!guessedCharacterId) {
+        appendGameMessage('*** Por favor, escolha um personagem para palpitar. ***');
+        return;
     }
-    mensagensRecebidas.scrollTop = mensagensRecebidas.scrollHeight;
+    if (currentRoomId) {
+        const guessedCharacterName = capitalizeFirstLetter(guessedCharacterId);
+        appendGameMessage(`Você palpitou: ${guessedCharacterName}`);
+        socket.emit('make_guess', {
+            roomId: currentRoomId,
+            guessedCharacter: guessedCharacterId
+        });
+    }
 });
+
+socket.on('receive_game_message', (data) => {
+    if (data.type === 'chat_message') {
+         appendGameMessage(`${data.sender}: ${data.message}`);
+    } else if (data.type === 'pergunta') {
+        appendGameMessage(`Pergunta de ${data.sender}: ${data.data.questionText}`);
+    }
+});
+
+socket.on('guess_result', (data) => {
+    const guessedCharName = capitalizeFirstLetter(data.guessedCharacter);
+    if (data.correct) {
+        appendGameMessage(`*** ${data.guesser} acertou! O personagem era ${guessedCharName}. Fim de jogo! ***`);
+        makeGuessButton.disabled = true;
+        sendGameMsgButton.disabled = true;
+        inputMsg.disabled = true;
+    } else {
+        appendGameMessage(`*** ${data.guesser} palpitou ${guessedCharName}, mas estava errado! ***`);
+    }
+});
+
 
 confirmLeaveGameButton.addEventListener('click', () => {
     if (currentRoomId) {
@@ -204,13 +274,14 @@ confirmLeaveGameButton.addEventListener('click', () => {
     }
 });
 
+
 socket.on('player_left', (data) => {
     if (currentRoomId) {
+        appendGameMessage(`*** ${data.username} saiu do jogo. A partida foi encerrada. ***`);
         displayStatus(`${data.username} saiu do jogo. A partida foi encerrada.`, 'info');
         gameContent.style.display = 'none';
         loginSection.style.display = 'block';
         currentRoomId = null;
-        myUsername = null;
         opponentUsernameGlobal = null;
         reInicia();
     }
@@ -218,11 +289,11 @@ socket.on('player_left', (data) => {
 
 socket.on('opponent_disconnected', (data) => {
      if (currentRoomId) {
+        appendGameMessage(`*** Seu oponente (${data.opponentUsername}) desconectou. A partida foi encerrada. ***`);
         displayStatus(`Seu oponente (${data.opponentUsername}) desconectou. A partida foi encerrada.`, 'error');
         gameContent.style.display = 'none';
         loginSection.style.display = 'block';
         currentRoomId = null;
-        myUsername = null;
         opponentUsernameGlobal = null;
         reInicia();
     }
@@ -230,14 +301,18 @@ socket.on('opponent_disconnected', (data) => {
 
 socket.on('error_message', (data) => {
     displayStatus(`Erro: ${data.message}`, 'error');
-    connectButton.disabled = false;
-    usernameInput.disabled = false;
-    opponentNameInput.disabled = false;
+    appendGameMessage(`*** Erro do servidor: ${data.message} ***`);
+    if (loginSection.style.display !== 'none') {
+        connectButton.disabled = false;
+        usernameInput.disabled = false;
+        opponentNameInput.disabled = false;
+    }
 });
 
 socket.on('disconnect', () => {
     displayStatus('Desconectado do servidor. Tentando reconectar...', 'error');
     if (gameContent.style.display === 'block') {
+        appendGameMessage('*** Desconectado do servidor... ***');
         gameContent.style.display = 'none';
         loginSection.style.display = 'block';
         currentRoomId = null;
@@ -249,6 +324,9 @@ socket.on('disconnect', () => {
 socket.on('connect', () => {
     displayStatus('Conectado ao servidor!', 'success');
     if (myUsername) {
+        appendGameMessage('*** Reconectado! Registrando novamente... ***');
         socket.emit('register_user', myUsername);
+    } else {
+         appendGameMessage('*** Conectado ao servidor! ***');
     }
 });

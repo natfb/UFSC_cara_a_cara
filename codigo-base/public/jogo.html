@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-br">
 
@@ -17,7 +18,7 @@
             background-color: #f9f9f9;
         }
         #game-content {
-            display: none; /* Escondido inicialmente */
+            display: none; 
         }
         #invitation-popup {
             display: none;
@@ -39,6 +40,7 @@
         .status-success { background-color: #d4edda; color: #155724; }
         .status-error { background-color: #f8d7da; color: #721c24; }
         .status-info { background-color: #cce5ff; color: #004085; }
+        .guess-section { margin-top: 15px; }
     </style>
 </head>
 
@@ -66,37 +68,37 @@
     <div id="game-content">
         <div class="cabecalho">
             <p class="text-center responsive-text">Jogo Cara a Cara</p><br>
-            <p class="text-center responsive-text">Você é: <span id="your-character-name"></span> <img id="your-character-image" src="f1.png" style="width: 50px; vertical-align: middle;"></p>
+            <p class="text-center responsive-text">Seu personagem secreto: <img id="your-character-image" src="" alt="Seu Personagem" style="width: 50px; vertical-align: middle; border: 2px solid yellow;"></p>
             <p class="text-center responsive-text">Jogando contra: <span id="opponent-username-display"></span></p>
         </div>
 
         <div class="tabuleiro">
             <div class="row p-2 py-10">
-                <!-- Imagens do tabuleiro como antes -->
-                <div class="col-4 col-lg-1 "> <img onclick="marcaDesmarca(this)" src="f1.png" data-char="f1"> </div>
-                <div class="col-4 col-lg-1 "> <img onclick="marcaDesmarca(this)" src="f2.png" data-char="f2"></div>
-                <div class="col-4 col-lg-1 "> <img onclick="marcaDesmarca(this)" src="f3.png" data-char="f3"></div>
-                <div class="col-4 col-lg-1 "> <img onclick="marcaDesmarca(this)" src="f4.png" data-char="f4"></div>
-                <div class="col-4 col-lg-1 "> <img onclick="marcaDesmarca(this)" src="f5.png" data-char="f5"> </div>
-                <div class="col-4 col-lg-1 "> <img onclick="marcaDesmarca(this)" src="f6.png" data-char="f6"> </div>
-                <div class="col-4 col-lg-1 "> <img onclick="marcaDesmarca(this)" src="f7.png" data-char="f7"> </div>
-                <div class="col-4 col-lg-1 "> <img onclick="marcaDesmarca(this)" src="f8.png" data-char="f8"></div>
-                <div class="col-4 col-lg-1 "> <img onclick="marcaDesmarca(this)" src="f9.png" data-char="f9"></div>
-                <div class="col-4 col-lg-1 "> <img onclick="marcaDesmarca(this)" src="f10.png" data-char="f10"></div>
-                <div class="col-4 col-lg-1 "> <img onclick="marcaDesmarca(this)" src="f11.png" data-char="f11"> </div>
-                <div class="col-4 col-lg-1 "> <img onclick="marcaDesmarca(this)" src="f12.png" data-char="f12"> </div>
-                <div class="col-4 col-lg-1 "> <img onclick="marcaDesmarca(this)" src="f13.png" data-char="f13"> </div>
-                <div class="col-4 col-lg-1 "> <img onclick="marcaDesmarca(this)" src="f14.png" data-char="f14"></div>
-                <div class="col-4 col-lg-1 "> <img onclick="marcaDesmarca(this)" src="f15.png" data-char="f15"></div>
-                <div class="col-4 col-lg-1 "> <img onclick="marcaDesmarca(this)" src="f16.png" data-char="f16"></div>
-                <div class="col-4 col-lg-1 "> <img onclick="marcaDesmarca(this)" src="f17.png" data-char="f17"> </div>
-                <div class="col-4 col-lg-1 "> <img onclick="marcaDesmarca(this)" src="f18.png" data-char="f18"> </div>
-                <div class="col-4 col-lg-1 "> <img onclick="marcaDesmarca(this)" src="f19.png" data-char="f19"></div>
-                <div class="col-4 col-lg-1 "> <img onclick="marcaDesmarca(this)" src="f20.png" data-char="f20"></div>
-                <div class="col-4 col-lg-1 "> <img onclick="marcaDesmarca(this)" src="f21.png" data-char="f21"> </div>
-                <div class="col-4 col-lg-1 "> <img onclick="marcaDesmarca(this)" src="f22.png" data-char="f22"> </div>
-                <div class="col-4 col-lg-1 "> <img onclick="marcaDesmarca(this)" src="f23.png" data-char="f23"> </div>
-                <div class="col-4 col-lg-1 "> <img onclick="marcaDesmarca(this)" src="f24.png" data-char="f24"></div>
+                <!-- Character images -->
+                <div class="col-4 col-lg-1 "> <img onclick="marcaDesmarca(this)" src="alessandro.png" data-char="alessandro"> </div>
+                <div class="col-4 col-lg-1 "> <img onclick="marcaDesmarca(this)" src="alfredo.png" data-char="alfredo"></div>
+                <div class="col-4 col-lg-1 "> <img onclick="marcaDesmarca(this)" src="anita.png" data-char="anita"></div>
+                <div class="col-4 col-lg-1 "> <img onclick="marcaDesmarca(this)" src="anna.png" data-char="anna"></div>
+                <div class="col-4 col-lg-1 "> <img onclick="marcaDesmarca(this)" src="bernardo.png" data-char="bernardo"> </div>
+                <div class="col-4 col-lg-1 "> <img onclick="marcaDesmarca(this)" src="carlo.png" data-char="carlo"> </div>
+                <div class="col-4 col-lg-1 "> <img onclick="marcaDesmarca(this)" src="chiara.png" data-char="chiara"> </div>
+                <div class="col-4 col-lg-1 "> <img onclick="marcaDesmarca(this)" src="davide.png" data-char="davide"></div>
+                <div class="col-4 col-lg-1 "> <img onclick="marcaDesmarca(this)" src="ernesto.png" data-char="ernesto"></div>
+                <div class="col-4 col-lg-1 "> <img onclick="marcaDesmarca(this)" src="filippo.png" data-char="filippo"></div>
+                <div class="col-4 col-lg-1 "> <img onclick="marcaDesmarca(this)" src="giacomo.png" data-char="giacomo"> </div>
+                <div class="col-4 col-lg-1 "> <img onclick="marcaDesmarca(this)" src="giorgio.png" data-char="giorgio"> </div>
+                <div class="col-4 col-lg-1 "> <img onclick="marcaDesmarca(this)" src="giuseppe.png" data-char="giuseppe"> </div>
+                <div class="col-4 col-lg-1 "> <img onclick="marcaDesmarca(this)" src="guglielmo.png" data-char="guglielmo"></div>
+                <div class="col-4 col-lg-1 "> <img onclick="marcaDesmarca(this)" src="manuele.png" data-char="manuele"></div>
+                <div class="col-4 col-lg-1 "> <img onclick="marcaDesmarca(this)" src="marco.png" data-char="marco"></div>
+                <div class="col-4 col-lg-1 "> <img onclick="marcaDesmarca(this)" src="maria.png" data-char="maria"> </div>
+                <div class="col-4 col-lg-1 "> <img onclick="marcaDesmarca(this)" src="pietro.png" data-char="pietro"> </div>
+                <div class="col-4 col-lg-1 "> <img onclick="marcaDesmarca(this)" src="poolo.png" data-char="poolo"></div>
+                <div class="col-4 col-lg-1 "> <img onclick="marcaDesmarca(this)" src="riccardo.png" data-char="riccardo"></div>
+                <div class="col-4 col-lg-1 "> <img onclick="marcaDesmarca(this)" src="roberto.png" data-char="roberto"> </div>
+                <div class="col-4 col-lg-1 "> <img onclick="marcaDesmarca(this)" src="samuele.png" data-char="samuele"> </div>
+                <div class="col-4 col-lg-1 "> <img onclick="marcaDesmarca(this)" src="susanna.png" data-char="susanna"> </div>
+                <div class="col-4 col-lg-1 "> <img onclick="marcaDesmarca(this)" src="tommaso.png" data-char="tommaso"></div>
             </div>
         </div>
 
@@ -104,9 +106,45 @@
             <label for="mensagensRecebidas" class="form-label responsive-text">Mensagens/Perguntas:</label>
             <textarea readonly class="form-control" id="mensagensRecebidas" rows="3"></textarea>
             <br>
-            <label for="inputMsg" class="form-label responsive-text">Enviar Pergunta/Resposta:</label><br>
-            <input id="inputMsg" class="form-control mb-2">
-            <button type="button" id="sendGameMsgButton" class="btn btn-primary ms-2"><i class="bi bi-send"></i> Enviar</button><br>
+            <div class="input-group mb-3">
+                 <input id="inputMsg" class="form-control" placeholder="Enviar Pergunta/Resposta...">
+                 <button type="button" id="sendGameMsgButton" class="btn btn-primary"><i class="bi bi-send"></i> Enviar</button>
+            </div>
+
+            <!-- Guess Section with hardcoded options -->
+            <div class="guess-section input-group mb-3">
+                 <label for="characterGuessSelect" class="input-group-text">Acho que é:</label>
+                 <select class="form-select" id="characterGuessSelect">
+                     <option selected disabled value="">Escolha um personagem...</option>
+                     <option value="alessandro">Alessandro</option>
+                     <option value="alfredo">Alfredo</option>
+                     <option value="anita">Anita</option>
+                     <option value="anna">Anna</option>
+                     <option value="bernardo">Bernardo</option>
+                     <option value="carlo">Carlo</option>
+                     <option value="chiara">Chiara</option>
+                     <option value="davide">Davide</option>
+                     <option value="ernesto">Ernesto</option>
+                     <option value="filippo">Filippo</option>
+                     <option value="giacomo">Giacomo</option>
+                     <option value="giorgio">Giorgio</option>
+                     <option value="giuseppe">Giuseppe</option>
+                     <option value="guglielmo">Guglielmo</option>
+                     <option value="manuele">Manuele</option>
+                     <option value="marco">Marco</option>
+                     <option value="maria">Maria</option>
+                     <option value="pietro">Pietro</option>
+                     <option value="poolo">Poolo</option> <!-- Assuming Poolo is correct -->
+                     <option value="riccardo">Riccardo</option>
+                     <option value="roberto">Roberto</option>
+                     <option value="samuele">Samuele</option>
+                     <option value="susanna">Susanna</option>
+                     <option value="tommaso">Tommaso</option>
+                 </select>
+                 <button type="button" id="makeGuessButton" class="btn btn-warning"><i class="bi bi-question-circle"></i> Palpitar</button>
+            </div>
+            <!-- End Guess Section -->
+
             <button type="button" class="btn btn-danger pull-right mt-2" data-bs-toggle="modal" data-bs-target="#confirmaSair"><i class="bi bi-x-circle"></i> Sair do Jogo
             </button>
         </div>
@@ -130,9 +168,10 @@
             </div>
         </div>
     </div>
-    
+
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- app.js will still handle button clicks and socket events, but not select population -->
     <script src="./app.js"></script>
 </body>
 </html>
