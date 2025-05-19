@@ -143,11 +143,7 @@ function clearAuthInputs() {
 }
 
 function updateOnlineUsersList(users) {
-    if (!Array.isArray(users)) {
-        onlineUsersList.innerHTML = '<p class="text-muted">Erro ao carregar usuários</p>';
-        return;
-    }
-
+    
     if (users.length === 0) {
         onlineUsersList.innerHTML = '<p class="text-muted">Nenhum usuário online para desafiar</p>';
         return;

@@ -22,7 +22,7 @@ async function conecta() {
     
     const existingCollections = await db.listCollections().toArray();
     const collectionNames = existingCollections.map(col => col.name);
-    const collectionsToEnsure = ['users', 'partida'];
+    const collectionsToEnsure = ['users'];
     
     for (const name of collectionsToEnsure) {
         if (!collectionNames.includes(name)) {
@@ -32,11 +32,10 @@ async function conecta() {
     }
     
     users = await db.collection('users');
-    partida = await db.collection('partida');
+    
     console.log('conectado ao banco de dados');
     
     iniciarWebSocket(io);
-    
 }
 
 app.get('/', (req, res) => {
@@ -60,18 +59,13 @@ app.post('/register', async (req, res) => {
         const newUser = {
             username: username.trim(),
             password: hashedPassword,
-            createdAt: new Date()
         };
         
         await users.insertOne(newUser);
         res.json({ success: true, message: 'User registered successfully' });
     } catch (error) {
-        if (error.code === 11000) {
-            res.status(400).json({ success: false, message: 'Username already exists' });
-        } else {
-            console.error('Registration error:', error);
-            res.status(500).json({ success: false, message: 'Internal server error' });
-        }
+        console.error('Registration error:', error);
+        res.status(500).json({ success: false, message: 'Internal server error' });
     }
 });
 
@@ -149,7 +143,6 @@ function iniciarWebSocket(io) {
             socket.emit('registration_success', { username: currentUsername, message: `Você foi registrado como ${currentUsername}` });
             console.log(`Socket ${socket.id} registrado como usuário: ${currentUsername}`);
 
-            // Broadcast updated online users list
             broadcastOnlineUsers();
 
             for (const roomId in gameRooms) {
