@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-br">
 
@@ -9,7 +8,7 @@
     <link rel="stylesheet" href="estilo.css">
     <title>Jogo Cara a Cara Online</title>
     <style>
-        #login-section {
+        #auth-section, #user-selection-section {
             max-width: 400px;
             margin: 50px auto;
             padding: 20px;
@@ -19,6 +18,9 @@
         }
         #game-content {
             display: none; 
+        }
+        #user-selection-section {
+            display: none;
         }
         #invitation-popup {
             display: none;
@@ -41,30 +43,113 @@
         .status-error { background-color: #f8d7da; color: #721c24; }
         .status-info { background-color: #cce5ff; color: #004085; }
         .guess-section { margin-top: 15px; }
+        
+        .online-user-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f8f9fa;
+        }
+        
+        .online-users-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .auth-tabs {
+            margin-bottom: 20px;
+        }
+        
+        .auth-tab {
+            display: none;
+        }
+        
+        .auth-tab.active {
+            display: block;
+        }
     </style>
 </head>
 
 <body>
-    <div id="login-section" class="container text-center">
+    <!-- Authentication Section -->
+    <div id="auth-section" class="container text-center">
         <h2>Bem-vindo ao Cara a Cara Online!</h2>
-        <div class="mb-3">
-            <label for="username" class="form-label">Seu Nome:</label>
-            <input type="text" class="form-control" id="username" placeholder="Digite seu nome">
+        
+        <!-- Tab buttons -->
+        <div class="auth-tabs">
+            <button id="loginTabBtn" class="btn btn-outline-primary me-2 active">Login</button>
+            <button id="registerTabBtn" class="btn btn-outline-secondary">Registrar</button>
         </div>
-        <div class="mb-3">
-            <label for="opponentname" class="form-label">Nome do Oponente:</label>
-            <input type="text" class="form-control" id="opponentname" placeholder="Com quem você quer jogar?">
+        
+        <!-- Login Tab -->
+        <div id="loginTab" class="auth-tab active">
+            <h4>Entrar</h4>
+            <div class="mb-3">
+                <label for="loginUsername" class="form-label">Nome de Usuário:</label>
+                <input type="text" class="form-control" id="loginUsername" placeholder="Digite seu nome de usuário">
+            </div>
+            <div class="mb-3">
+                <label for="loginPassword" class="form-label">Senha:</label>
+                <input type="password" class="form-control" id="loginPassword" placeholder="Digite sua senha">
+            </div>
+            <button id="loginButton" class="btn btn-primary">Entrar</button>
         </div>
-        <button id="connectButton" class="btn btn-primary">Conectar e Enviar Convite</button>
-        <div id="status-area" class="status-message" style="display: none;"></div>
+        
+        <!-- Register Tab -->
+        <div id="registerTab" class="auth-tab">
+            <h4>Criar Conta</h4>
+            <div class="mb-3">
+                <label for="registerUsername" class="form-label">Nome de Usuário:</label>
+                <input type="text" class="form-control" id="registerUsername" placeholder="Escolha um nome de usuário">
+            </div>
+            <div class="mb-3">
+                <label for="registerPassword" class="form-label">Senha:</label>
+                <input type="password" class="form-control" id="registerPassword" placeholder="Escolha uma senha">
+            </div>
+            <div class="mb-3">
+                <label for="confirmPassword" class="form-label">Confirmar Senha:</label>
+                <input type="password" class="form-control" id="confirmPassword" placeholder="Confirme sua senha">
+            </div>
+            <button id="registerButton" class="btn btn-success">Criar Conta</button>
+        </div>
+        
+        <div id="auth-status-area" class="status-message" style="display: none;"></div>
     </div>
 
+    <!-- User Selection Section -->
+    <div id="user-selection-section" class="container text-center">
+        <h3>Escolha um Oponente</h3>
+        <p>Usuário logado: <strong id="loggedUsername"></strong></p>
+        
+        <div class="mb-3">
+            <h5>Usuários Online:</h5>
+            <div id="onlineUsersList" class="online-users-list">
+                <p class="text-muted">Carregando usuários online...</p>
+            </div>
+        </div>
+        
+        <button id="refreshUsersButton" class="btn btn-info me-2">
+            <i class="bi bi-arrow-clockwise"></i> Atualizar Lista
+        </button>
+        <button id="logoutButton" class="btn btn-danger">
+            <i class="bi bi-box-arrow-right"></i> Logout
+        </button>
+        
+        <div id="selection-status-area" class="status-message" style="display: none;"></div>
+    </div>
+
+    <!-- Invitation Popup -->
     <div id="invitation-popup">
         <p id="invitation-text"></p>
         <button id="acceptInvite" class="btn btn-success me-2">Aceitar</button>
         <button id="rejectInvite" class="btn btn-danger">Rejeitar</button>
     </div>
 
+    <!-- Game Content (unchanged) -->
     <div id="game-content">
         <div class="cabecalho">
             <p class="text-center responsive-text">Jogo Cara a Cara</p><br>
@@ -134,7 +219,7 @@
                      <option value="marco">Marco</option>
                      <option value="maria">Maria</option>
                      <option value="pietro">Pietro</option>
-                     <option value="poolo">Poolo</option> <!-- Assuming Poolo is correct -->
+                     <option value="poolo">Poolo</option>
                      <option value="riccardo">Riccardo</option>
                      <option value="roberto">Roberto</option>
                      <option value="samuele">Samuele</option>
@@ -171,7 +256,6 @@
 
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- app.js will still handle button clicks and socket events, but not select population -->
     <script src="./app.js"></script>
 </body>
 </html>
