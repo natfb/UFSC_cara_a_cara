@@ -64,8 +64,12 @@ app.post('/register', async (req, res) => {
         await users.insertOne(newUser);
         res.json({ success: true, message: 'User registered successfully' });
     } catch (error) {
-        console.error('Registration error:', error);
-        res.status(500).json({ success: false, message: 'Internal server error' });
+        if (error.code === 11000) {
+            res.status(400).json({ success: false, message: 'Username already exists' });
+        } else {
+            console.error('Registration error:', error);
+            res.status(500).json({ success: false, message: 'Internal server error' });
+        }
     }
 });
 
